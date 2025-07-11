@@ -174,7 +174,12 @@ chrome.action.onClicked.addListener((tab) => {
 // Handle keyboard commands
 chrome.commands.onCommand.addListener((command) => {
   if (command === "toggle-lyrics") {
-    createPopupWindow();
+    // Send message to content script to toggle popup
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0] && tabs[0].url.includes('open.spotify.com')) {
+        chrome.tabs.sendMessage(tabs[0].id, {type: "TOGGLE_POPUP"});
+      }
+    });
   }
 });
 

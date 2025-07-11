@@ -41,8 +41,8 @@
   "commands": {
     "toggle-lyrics": {
       "suggested_key": {
-        "default": "Alt+L",
-        "mac": "Alt+L"
+        "default": "Ctrl+L",
+        "mac": "Cmd+L"
       },
       "description": "Toggle lyrics popup"
     }
