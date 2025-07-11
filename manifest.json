@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Spotify Web Lyrics Plus",
+  "version": "1.0.0",
+  "description": "Multi-provider lyrics extension for Spotify Web Player with auto-detection",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://open.spotify.com/*",
+    "https://lrclib.net/*",
+    "https://spclient.wg.spotify.com/*",
+    "https://genius.com/*",
+    "https://apic-desktop.musixmatch.com/*",
+    "https://kr.imelon.co/*"
+  ],
+  "background": {
+  "scripts": ["background.js"]
+},
+  "content_scripts": [
+    {
+      "matches": ["https://open.spotify.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["page.js"],
+      "matches": ["https://open.spotify.com/*"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Spotify Web Lyrics Plus"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
