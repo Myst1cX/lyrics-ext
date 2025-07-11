@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Setup - Spotify Web Lyrics Plus</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #181818;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #1db954;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .setup-section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #1db954;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .instructions {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1db954;
+        }
+        
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .warning {
+            background: #4a1f1f;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1db954;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1db954;
+            box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+        
+        .save-btn {
+            background: #1db954;
+            color: #000;
+        }
+        
+        .save-btn:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+        }
+        
+        .cancel-btn {
+            background: #333;
+            color: #fff;
+        }
+        
+        .cancel-btn:hover {
+            background: #444;
+        }
+        
+        .success {
+            background: #1f4a1f;
+            color: #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+            display: none;
+        }
+        
+        a {
+            color: #1db954;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        a:hover {
+            color: #1ed760;
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .provider-icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Token Setup</h1>
+        
+        <!-- Musixmatch Setup -->
+        <div id="musixmatch-setup" class="setup-section hidden">
+            <h2><span class="provider-icon">🎶</span>Musixmatch Token Setup</h2>
+            
+            <div class="instructions">
+                <strong>How to retrieve your Musixmatch token:</strong>
+                <ol>
+                    <li>Go to <a href="https://www.musixmatch.com/" target="_blank">Musixmatch</a> and click on Login</li>
+                    <li>Select [Community] as your product</li>
+                    <li>Open DevTools (Press F12 or Right click and Inspect)</li>
+                    <li>Go to the Network tab → Click on the www.musixmatch.com domain → Cookies</li>
+                    <li>Right-click on the content of the musixmatchUserToken and select Copy value</li>
+                    <li>Go to <a href="https://jsonformatter.curiousconcept.com/" target="_blank">JSON Formatter</a> → Paste the content → Click Process</li>
+                    <li>Copy the value of web-desktop-app-v1.0 → Paste the token below and press Save</li>
+                </ol>
+            </div>
+            
+            <div class="warning">
+                <strong>WARNING:</strong> Keep your token private! Do not share it with others.
+            </div>
+            
+            <div class="input-group">
+                <label for="musixmatch-token">Musixmatch Token:</label>
+                <input type="text" id="musixmatch-token" placeholder="Enter your Musixmatch user token here">
+            </div>
+        </div>
+        
+        <!-- Spotify Setup -->
+        <div id="spotify-setup" class="setup-section hidden">
+            <h2><span class="provider-icon">🎵</span>Spotify Token Setup</h2>
+            
+            <div class="instructions">
+                <strong>How to retrieve your Spotify token:</strong>
+                <ol>
+                    <li>Go to <a href="https://open.spotify.com/" target="_blank">Spotify Web Player</a> and log in. Play a song</li>
+                    <li>Open DevTools (Press F12 or Right click and Inspect)</li>
+                    <li>Go to the Network tab and search for "spclient"</li>
+                    <li>You may have to wait a little for it to load</li>
+                    <li>Click on one of the spclient domains and go to the Headers section</li>
+                    <li>Under Request Headers, locate the authorization header</li>
+                    <li>If there isn't one, try a different spclient domain</li>
+                    <li>Right-click on the content of the authorization header and select Copy value</li>
+                    <li>Paste the token below and press Save</li>
+                </ol>
+            </div>
+            
+            <div class="warning">
+                <strong>WARNING:</strong> Keep your token private! Do not share it with others.<br>
+                <strong>NOTE:</strong> Spotify requires a fresh token every hour/upon page reload for security.
+            </div>
+            
+            <div class="input-group">
+                <label for="spotify-token">Spotify Token:</label>
+                <input type="text" id="spotify-token" placeholder="Enter your Spotify user token here">
+            </div>
+        </div>
+        
+        <div class="success" id="success-message">
+            Token saved successfully! You can now close this tab.
+        </div>
+        
+        <div class="button-group">
+            <button class="save-btn" id="save-btn">Save Token</button>
+            <button class="cancel-btn" id="cancel-btn">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        // Get provider from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const provider = urlParams.get('provider');
+        
+        // Show appropriate setup section
+        if (provider === 'musixmatch') {
+            document.getElementById('musixmatch-setup').classList.remove('hidden');
+            document.getElementById('musixmatch-token').value = localStorage.getItem('lyricsPlusMusixmatchToken') || '';
+        } else if (provider === 'spotify') {
+            document.getElementById('spotify-setup').classList.remove('hidden');
+            document.getElementById('spotify-token').value = localStorage.getItem('lyricsPlusSpotifyToken') || '';
+        }
+        
+        // Save token
+        document.getElementById('save-btn').addEventListener('click', () => {
+            if (provider === 'musixmatch') {
+                const token = document.getElementById('musixmatch-token').value.trim();
+                localStorage.setItem('lyricsPlusMusixmatchToken', token);
+            } else if (provider === 'spotify') {
+                const token = document.getElementById('spotify-token').value.trim();
+                localStorage.setItem('lyricsPlusSpotifyToken', token);
+            }
+            
+            // Show success message
+            document.getElementById('success-message').style.display = 'block';
+            
+            // Close tab after 2 seconds
+            setTimeout(() => {
+                window.close();
+            }, 2000);
+        });
+        
+        // Cancel
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            window.close();
+        });
+        
+        // Auto-focus input
+        if (provider === 'musixmatch') {
+            document.getElementById('musixmatch-token').focus();
+        } else if (provider === 'spotify') {
+            document.getElementById('spotify-token').focus();
+        }
+    </script>
+</body>
+</html>

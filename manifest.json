@@ -7,7 +7,8 @@
     "activeTab",
     "storage",
     "scripting",
-    "tabs"
+    "tabs",
+    "windows"
   ],
   "host_permissions": [
     "https://open.spotify.com/*",
@@ -15,26 +16,36 @@
     "https://spclient.wg.spotify.com/*",
     "https://genius.com/*",
     "https://apic-desktop.musixmatch.com/*",
-    "https://kr.imelon.co/*"
+    "https://kr.imelon.co/*",
+    "https://translate.googleapis.com/*"
   ],
   "background": {
-  "scripts": ["background.js"]
-},
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://open.spotify.com/*"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["page.js"],
+      "resources": ["page.js", "token-setup.html"],
       "matches": ["https://open.spotify.com/*"]
     }
   ],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Spotify Web Lyrics Plus"
+  },
+  "commands": {
+    "toggle-lyrics": {
+      "suggested_key": {
+        "default": "Alt+L",
+        "mac": "Alt+L"
+      },
+      "description": "Toggle lyrics popup"
+    }
   },
   "options_ui": {
     "page": "options.html",
