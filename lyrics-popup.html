@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Web Lyrics Plus</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: white;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { 
+            display: none; 
+        }
+        
+        .hide-scrollbar { 
+            scrollbar-width: none !important; 
+            -ms-overflow-style: none !important; 
+        }
+        
+        .popup-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            background: #121212;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        
+        .header h3 {
+            margin: 0;
+            font-weight: 600;
+            color: #1db954;
+        }
+        
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .header-buttons button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .header-buttons button:hover {
+            background: #333;
+        }
+        
+        .close-btn {
+            font-size: 18px !important;
+            font-weight: bold;
+            padding: 0 6px !important;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .provider-tab {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: #333;
+            color: white;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .provider-tab.active {
+            background: #1db954;
+        }
+        
+        .provider-tab:hover {
+            background: #444;
+        }
+        
+        .provider-tab.active:hover {
+            background: #1db954;
+        }
+        
+        .controls-wrapper {
+            background: #121212;
+            border-bottom: 1px solid #333;
+            transition: max-height 0.3s, padding 0.3s;
+            overflow: hidden;
+        }
+        
+        .translation-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .translation-controls select,
+        .translation-controls button {
+            flex: 1;
+            height: 28px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .translation-controls button {
+            background: #1db954;
+        }
+        
+        .translation-controls button:hover {
+            background: #1ed760;
+        }
+        
+        .offset-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 15px;
+            width: 100%;
+        }
+        
+        .offset-input-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 16px;
+        }
+        
+        .offset-input {
+            width: 68px;
+            height: 28px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 2px 24px 2px 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .offset-spinner {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 28px;
+            width: 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+        
+        .offset-spinner button {
+            background: #333;
+            border: none;
+            width: 24px;
+            height: 14px;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .offset-spinner button:hover {
+            background: #444;
+        }
+        
+        .offset-spinner button:first-child {
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .offset-spinner button:last-child {
+            border-radius: 0 0 2px 2px;
+        }
+        
+        .lyrics-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px;
+            white-space: pre-wrap;
+            font-size: 22px;
+            line-height: 1.5;
+            background: #121212;
+            user-select: text;
+            text-align: center;
+        }
+        
+        .lyrics-container p {
+            margin: 0 0 6px 0;
+            transition: transform 0.18s, color 0.15s, filter 0.13s, opacity 0.13s;
+            color: white;
+            filter: blur(0.7px);
+            opacity: 0.8;
+        }
+        
+        .lyrics-container p.active {
+            color: #1db954;
+            font-weight: 700;
+            filter: none;
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-top: 1px solid #333;
+            background: #121212;
+            transition: max-height 0.3s;
+            overflow: hidden;
+        }
+        
+        .control-button {
+            cursor: pointer;
+            background: #1db954;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            transition: background 0.2s;
+        }
+        
+        .control-button:hover {
+            background: #1ed760;
+        }
+        
+        .control-button.secondary {
+            background: #555;
+        }
+        
+        .control-button.secondary:hover {
+            background: #666;
+        }
+        
+        .download-button {
+            position: relative;
+            background: none;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .download-dropdown {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            min-width: 90px;
+            background: #121212;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            padding: 4px;
+        }
+        
+        .download-dropdown button {
+            background: #121212;
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        
+        .download-dropdown button:hover {
+            background: #333;
+        }
+        
+        .font-size-select {
+            margin-right: 6px;
+            cursor: pointer;
+            background: #121212;
+            border: none;
+            color: white;
+            font-size: 14px;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+        
+        .font-size-select:hover {
+            background: #333;
+        }
+        
+        .hidden {
+            max-height: 0 !important;
+            padding: 0 12px !important;
+            pointer-events: none;
+        }
+        
+        .visible {
+            max-height: 100px !important;
+            padding: 8px 12px !important;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-container">
+        <!-- Header -->
+        <div class="header">
+            <h3>Lyrics+</h3>
+            <div class="header-buttons">
+                <div class="download-button" id="downloadBtn" title="Download lyrics">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v9"></path>
+                        <polyline points="8 13 12 17 16 13"></polyline>
+                        <rect x="4" y="19" width="16" height="2" rx="1"></rect>
+                    </svg>
+                    <div class="download-dropdown" id="downloadDropdown">
+                        <button id="downloadSynced">Synced</button>
+                        <button id="downloadUnsynced">Unsynced</button>
+                    </div>
+                </div>
+                <select class="font-size-select" id="fontSizeSelect" title="Change lyrics font size">
+                    <option value="16">16px</option>
+                    <option value="22" selected>22px</option>
+                    <option value="28">28px</option>
+                    <option value="32">32px</option>
+                    <option value="38">38px</option>
+                    <option value="44">44px</option>
+                </select>
+                <button id="translationToggle" title="Show/hide translation controls">🌐</button>
+                <button id="playbackToggle" title="Show/hide playback controls">🎛️</button>
+                <button id="offsetToggle" title="Show/hide timing offset">⚙️</button>
+                <button class="close-btn" id="closeBtn" title="Close Lyrics+">×</button>
+            </div>
+            
+            <!-- Provider tabs -->
+            <div class="tabs-container" id="providerTabs">
+                <!-- Provider tabs will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Translation controls -->
+        <div class="controls-wrapper hidden" id="translationWrapper">
+            <div class="translation-controls">
+                <select id="languageSelect">
+                    <!-- Language options will be populated by JavaScript -->
+                </select>
+                <button id="translateBtn">Translate</button>
+                <button id="removeTranslationBtn">Original</button>
+            </div>
+        </div>
+        
+        <!-- Offset controls -->
+        <div class="controls-wrapper visible" id="offsetWrapper">
+            <div class="offset-controls">
+                <div>
+                    Adjust lyrics timing (ms):<br>
+                    <span style="font-size: 11px; color: #aaa;">lower = appear later, higher = appear earlier</span>
+                </div>
+                <div class="offset-input-container">
+                    <input type="number" class="offset-input" id="offsetInput" min="-5000" max="5000" step="50" value="1000">
+                    <div class="offset-spinner">
+                        <button type="button" id="offsetUp">
+                            <svg viewBox="0 0 24 20" width="20" height="12" fill="rgba(255, 255, 255, 0.85)">
+                                <path d="M12 4L2 16H22L12 4Z" />
+                            </svg>
+                        </button>
+                        <button type="button" id="offsetDown">
+                            <svg viewBox="0 0 24 20" width="20" height="12" fill="rgba(255, 255, 255, 0.85)">
+                                <path d="M12 16L2 4H22L12 16Z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lyrics container -->
+        <div class="lyrics-container" id="lyricsContainer">
+            <p>Loading lyrics...</p>
+        </div>
+        
+        <!-- Playback controls -->
+        <div class="playback-controls visible" id="playbackControls">
+            <button class="control-button secondary" id="resetBtn" title="Restore Default Position and Size">↻</button>
+            <button class="control-button" id="prevBtn" title="Previous Track">⏮</button>
+            <button class="control-button" id="playPauseBtn" title="Play/Pause">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
+            <button class="control-button" id="nextBtn" title="Next Track">⏭</button>
+        </div>
+    </div>
+    
+    <script src="lyrics-popup.js"></script>
+</body>
+</html>
