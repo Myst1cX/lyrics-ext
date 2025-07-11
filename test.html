@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lyrics Extension Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #121212;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #1db954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1ed760;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #222;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lyrics Extension Test</h1>
+    
+    <div class="test-section">
+        <h2>Provider Tests</h2>
+        <button class="test-button" onclick="testLRCLIB()">Test LRCLIB</button>
+        <button class="test-button" onclick="testProviderUtils()">Test Provider Utils</button>
+        <div id="providerResults" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>UI Tests</h2>
+        <button class="test-button" onclick="testModal()">Test Modal</button>
+        <button class="test-button" onclick="testPopup()">Test Popup Creation</button>
+        <div id="uiResults" class="test-result"></div>
+    </div>
+    
+    <script src="providers.js"></script>
+    <script>
+        // Test LRCLIB provider
+        async function testLRCLIB() {
+            const resultDiv = document.getElementById('providerResults');
+            resultDiv.innerHTML = 'Testing LRCLIB provider...';
+            
+            const testInfo = {
+                title: "Shape of You",
+                artist: "Ed Sheeran",
+                album: "÷",
+                duration: 233712
+            };
+            
+            try {
+                const result = await ProviderLRCLIB.findLyrics(testInfo);
+                resultDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        // Test provider utilities
+        function testProviderUtils() {
+            const resultDiv = document.getElementById('providerResults');
+            const tests = [
+                { func: () => Utils.normalize("Ed Sheeran"), expected: "Ed Sheeran" },
+                { func: () => Utils.removeExtraInfo("Shape of You (Remix)"), expected: "Shape of You" },
+                { func: () => Utils.removeSongFeat("Song feat. Artist"), expected: "Song" }
+            ];
+            
+            let results = "Provider Utils Tests:\n";
+            tests.forEach((test, i) => {
+                const result = test.func();
+                const passed = result === test.expected;
+                results += `Test ${i + 1}: ${passed ? 'PASS' : 'FAIL'} (${result})\n`;
+            });
+            
+            resultDiv.innerHTML = `<pre>${results}</pre>`;
+        }
+        
+        // Test modal creation
+        function testModal() {
+            const resultDiv = document.getElementById('uiResults');
+            
+            // Create test modal
+            const modal = document.createElement("div");
+            modal.className = "lyrics-plus-modal";
+            modal.style.cssText = `
+                position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+                background: rgba(0,0,0,0.7); z-index: 100001; display: flex;
+                align-items: center; justify-content: center;
+            `;
+            
+            const box = document.createElement("div");
+            box.className = "lyrics-plus-modal-box";
+            box.style.cssText = `
+                background: #181818; color: #fff; border-radius: 14px;
+                padding: 30px; min-width: 350px; max-width: 90vw;
+                box-shadow: 0 2px 24px rgba(0,0,0,0.7);
+            `;
+            
+            box.innerHTML = `
+                <h3>Test Modal</h3>
+                <p>This is a test modal to verify the modal system works.</p>
+                <button onclick="this.closest('.lyrics-plus-modal').remove()">Close</button>
+            `;
+            
+            modal.appendChild(box);
+            document.body.appendChild(modal);
+            
+            resultDiv.innerHTML = 'Modal created successfully!';
+        }
+        
+        // Test popup creation
+        function testPopup() {
+            const resultDiv = document.getElementById('uiResults');
+            
+            // Check if popup styles are loaded
+            const hasStyles = document.getElementById('lyrics-plus-styles');
+            if (!hasStyles) {
+                resultDiv.innerHTML = 'Error: Popup styles not loaded. This test requires the content script to be running.';
+                return;
+            }
+            
+            // Create test popup
+            const popup = document.createElement("div");
+            popup.id = "test-lyrics-popup";
+            popup.style.cssText = `
+                position: fixed; bottom: 20px; right: 20px;
+                width: 300px; height: 200px; background: #121212; color: white;
+                border-radius: 12px; padding: 20px; z-index: 100000;
+                box-shadow: 0 0 20px rgba(0,0,0,0.9);
+            `;
+            
+            popup.innerHTML = `
+                <h3>Test Popup</h3>
+                <p>This is a test popup to verify the popup system works.</p>
+                <button onclick="this.closest('#test-lyrics-popup').remove()">Close</button>
+            `;
+            
+            document.body.appendChild(popup);
+            resultDiv.innerHTML = 'Test popup created successfully!';
+        }
+        
+        // Initial load test
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded');
+            console.log('Available providers:', Object.keys(Providers || {}));
+            console.log('Utils available:', typeof Utils !== 'undefined');
+        });
+    </script>
+</body>
+</html>

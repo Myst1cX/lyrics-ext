@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lyrics Extension Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            position: relative;
+            height: 100vh;
+        }
+        
+        .spotify-mockup {
+            background: #121212;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .spotify-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            background: #181818;
+            border-radius: 8px;
+        }
+        
+        .control-btn {
+            background: #333;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lyrics-plus-btn {
+            background: #1db954;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            margin-left: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* Popup Styles */
+        .lyrics-popup {
+            position: fixed;
+            bottom: 87px;
+            right: 20px;
+            width: 370px;
+            height: 500px;
+            background: #121212;
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        
+        .popup-header {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            background: #121212;
+        }
+        
+        .popup-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .popup-title {
+            margin: 0;
+            font-weight: 600;
+            color: #1db954;
+            font-size: 1.35em;
+        }
+        
+        .popup-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .popup-buttons button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .popup-buttons button:hover {
+            background: #333;
+        }
+        
+        .provider-tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .provider-tab {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: #333;
+            color: white;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .provider-tab.active {
+            background: #1db954;
+        }
+        
+        .lyrics-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 22px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .lyrics-line {
+            margin: 0 0 6px 0;
+            transition: all 0.18s;
+            color: white;
+            opacity: 0.8;
+            filter: blur(0.7px);
+        }
+        
+        .lyrics-line.active {
+            color: #1db954;
+            font-weight: 700;
+            opacity: 1;
+            filter: none;
+            transform: scale(1.05);
+        }
+        
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-top: 1px solid #333;
+            background: #121212;
+        }
+        
+        .playback-btn {
+            background: #1db954;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .playback-btn.secondary {
+            background: #555;
+        }
+        
+        .demo-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 300px;
+        }
+        
+        .demo-info h3 {
+            color: #1db954;
+            margin: 0 0 10px 0;
+        }
+        
+        .demo-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .demo-info li {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .highlight {
+            color: #1db954;
+            font-weight: 600;
+        }
+        
+        .resizer {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-left: 1.5px solid rgba(255, 255, 255, 0.15);
+            cursor: nwse-resize;
+            clip-path: polygon(100% 0, 0 100%, 100% 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-info">
+        <h3>🎵 Lyrics Extension Demo</h3>
+        <p>This demo shows the <span class="highlight">1:1 clone</span> of pip-gui-stable.user.js</p>
+        <ul>
+            <li>Press <span class="highlight">'L'</span> to toggle popup</li>
+            <li>Drag to move, resize from corner</li>
+            <li>5 providers: LRCLIB, Spotify, KPoe, Musixmatch, Genius</li>
+            <li>Translation & offset controls</li>
+            <li>Download synced (.lrc) & unsynced (.txt)</li>
+            <li>Auto-detection of best provider</li>
+        </ul>
+    </div>
+    
+    <div class="spotify-mockup">
+        <h2>🎵 Spotify Web Player (Mockup)</h2>
+        <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 18px; font-weight: 600;">Shape of You</div>
+            <div style="color: #b3b3b3; font-size: 14px;">Ed Sheeran</div>
+        </div>
+        
+        <div class="spotify-controls">
+            <button class="control-btn">⏮</button>
+            <button class="control-btn">⏸</button>
+            <button class="control-btn">⏭</button>
+            <button class="lyrics-plus-btn">Lyrics+</button>
+        </div>
+    </div>
+    
+    <!-- Lyrics Popup -->
+    <div class="lyrics-popup">
+        <div class="popup-header">
+            <div class="popup-header-content">
+                <h3 class="popup-title">Lyrics+</h3>
+                <div class="popup-buttons">
+                    <button title="Download lyrics">⬇</button>
+                    <button title="Font size">📝</button>
+                    <button title="Translation">🌐</button>
+                    <button title="Playback controls">🎛️</button>
+                    <button title="Timing offset">⚙️</button>
+                    <button title="Close">×</button>
+                </div>
+            </div>
+            <div class="provider-tabs">
+                <button class="provider-tab active">LRCLIB</button>
+                <button class="provider-tab">Spotify</button>
+                <button class="provider-tab">KPoe</button>
+                <button class="provider-tab">Musixmatch</button>
+                <button class="provider-tab">Genius</button>
+            </div>
+        </div>
+        
+        <div class="lyrics-container">
+            <div class="lyrics-line">The club isn't the best place to find a lover</div>
+            <div class="lyrics-line">So the bar is where I go</div>
+            <div class="lyrics-line active">Me and my friends at the table doing shots</div>
+            <div class="lyrics-line">Drinking fast and then we talk slow</div>
+            <div class="lyrics-line">Come over and start up a conversation</div>
+            <div class="lyrics-line">With just me and trust me I'll give it a chance</div>
+            <div class="lyrics-line">Now take my hand, stop</div>
+            <div class="lyrics-line">Put Van the Man on the jukebox</div>
+            <div class="lyrics-line">And then we start to dance</div>
+            <div class="lyrics-line">And now I'm singing like</div>
+        </div>
+        
+        <div class="playback-controls">
+            <button class="playback-btn secondary">↻</button>
+            <button class="playback-btn">⏮</button>
+            <button class="playback-btn">⏸</button>
+            <button class="playback-btn">⏭</button>
+        </div>
+        
+        <div class="resizer"></div>
+    </div>
+    
+    <script>
+        // Demo interactivity
+        document.addEventListener('DOMContentLoaded', () => {
+            const providerTabs = document.querySelectorAll('.provider-tab');
+            const lyricsLines = document.querySelectorAll('.lyrics-line');
+            let currentLine = 2;
+            
+            // Provider tab switching
+            providerTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    providerTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+            
+            // Simulate lyrics highlighting
+            setInterval(() => {
+                lyricsLines.forEach((line, i) => {
+                    line.classList.toggle('active', i === currentLine);
+                });
+                currentLine = (currentLine + 1) % lyricsLines.length;
+            }, 2000);
+            
+            // Keyboard shortcut demo
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'l' || e.key === 'L') {
+                    const popup = document.querySelector('.lyrics-popup');
+                    popup.style.display = popup.style.display === 'none' ? 'flex' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
