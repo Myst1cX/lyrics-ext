@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Web Lyrics Plus - Extension Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin: 0;
+            background: linear-gradient(45deg, #1db954, #1ed760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #b3b3b3;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .demo-card {
+            background: #181818;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            transition: transform 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .demo-card h3 {
+            color: #1db954;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        
+        .demo-card p {
+            color: #b3b3b3;
+            line-height: 1.6;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            color: #1db954;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .popup-preview {
+            background: #121212;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            max-width: 400px;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .popup-title {
+            color: #1db954;
+            font-weight: bold;
+        }
+        
+        .popup-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .popup-btn {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .popup-btn:hover {
+            background: #444;
+        }
+        
+        .popup-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .popup-tab {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .popup-tab.active {
+            background: #1db954;
+        }
+        
+        .popup-lyrics {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            color: #b3b3b3;
+            font-size: 14px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .installation-steps {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .installation-steps h4 {
+            color: #1db954;
+            margin-top: 0;
+        }
+        
+        .installation-steps ol {
+            color: #b3b3b3;
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            background: #1db954;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .cta-button:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+        }
+        
+        .cta-button.secondary {
+            background: #333;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Spotify Web Lyrics Plus</h1>
+            <p>Advanced lyrics extension with multi-provider support, translation, and floating popup</p>
+        </div>
+        
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>🎯 Key Features</h3>
+                <ul class="feature-list">
+                    <li>Multi-provider lyrics (LRCLIB, Spotify, KPoe, Musixmatch, Genius)</li>
+                    <li>Auto-detection of currently playing tracks</li>
+                    <li>Synced and unsynced lyrics support</li>
+                    <li>Translation to 80+ languages</li>
+                    <li>Download lyrics as LRC/TXT files</li>
+                    <li>Playback controls integration</li>
+                    <li>Customizable timing and appearance</li>
+                    <li>Hotkey support (Alt+L)</li>
+                </ul>
+            </div>
+            
+            <div class="demo-card">
+                <h3>🖥️ Popup Preview</h3>
+                <div class="popup-preview">
+                    <div class="popup-header">
+                        <div class="popup-title">Lyrics+</div>
+                        <div class="popup-controls">
+                            <button class="popup-btn">⬇️</button>
+                            <button class="popup-btn">22px</button>
+                            <button class="popup-btn">🌐</button>
+                            <button class="popup-btn">🎛️</button>
+                            <button class="popup-btn">⚙️</button>
+                            <button class="popup-btn">×</button>
+                        </div>
+                    </div>
+                    <div class="popup-tabs">
+                        <button class="popup-tab active">LRCLIB</button>
+                        <button class="popup-tab">Spotify</button>
+                        <button class="popup-tab">KPoe</button>
+                        <button class="popup-tab">Musixmatch</button>
+                        <button class="popup-tab">Genius</button>
+                    </div>
+                    <div class="popup-lyrics">
+                        🎵 Lyrics will appear here<br>
+                        with real-time highlighting<br>
+                        and auto-scrolling
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-card">
+                <h3>🔧 Installation</h3>
+                <div class="installation-steps">
+                    <h4>For Chrome/Edge:</h4>
+                    <ol>
+                        <li>Download the extension files</li>
+                        <li>Open chrome://extensions/</li>
+                        <li>Enable "Developer mode"</li>
+                        <li>Click "Load unpacked"</li>
+                        <li>Select the extension folder</li>
+                    </ol>
+                </div>
+                <button class="cta-button">Download Extension</button>
+            </div>
+            
+            <div class="demo-card">
+                <h3>🎮 Usage</h3>
+                <p>1. Open Spotify Web Player in any tab</p>
+                <p>2. Start playing a song</p>
+                <p>3. Click the extension icon or press <strong>Alt+L</strong></p>
+                <p>4. Lyrics will automatically load and sync!</p>
+                <br>
+                <p><strong>Provider Setup:</strong> Some providers (Spotify, Musixmatch) require authentication tokens. Double-click the provider tab to set up tokens.</p>
+                <button class="cta-button secondary">View Instructions</button>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #333;">
+            <p style="color: #666;">
+                Based on the original Spotify Web Lyrics Plus userscript<br>
+                Ported to browser extension with Manifest V3 support
+            </p>
+        </div>
+    </div>
+</body>
+</html>

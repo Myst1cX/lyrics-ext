@@ -147,6 +147,11 @@ function highlightSyncedLyrics(lyrics, container) {
   highlightTimer = setInterval(() => {
     // Get current position from background script
     chrome.runtime.sendMessage({type: "GET_POSITION"}, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("[Popup] Runtime error getting position:", chrome.runtime.lastError);
+        return;
+      }
+      
       if (!response) return;
       
       const { currentTime, isPlaying } = response;
@@ -213,6 +218,11 @@ function updateTabs(tabsContainer, noneSelected) {
 
 function updatePlayPauseIcon(button) {
   chrome.runtime.sendMessage({type: "GET_POSITION"}, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("[Popup] Runtime error getting position:", chrome.runtime.lastError);
+      return;
+    }
+    
     if (!response) return;
     
     const { isPlaying } = response;
@@ -239,7 +249,12 @@ async function fetchLyrics(trackInfo, providerName) {
       trackInfo: trackInfo,
       provider: providerName
     }, (response) => {
-      resolve(response);
+      if (chrome.runtime.lastError) {
+        console.error("[Popup] Runtime error:", chrome.runtime.lastError);
+        resolve({error: "Failed to communicate with background script"});
+      } else {
+        resolve(response || {error: "No response from background script"});
+      }
     });
   });
 }
@@ -646,6 +661,11 @@ function startPolling() {
   
   pollingInterval = setInterval(() => {
     chrome.runtime.sendMessage({type: "GET_TRACK_INFO"}, async (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("[Popup] Runtime error getting track info:", chrome.runtime.lastError);
+        return;
+      }
+      
       if (response && response.trackInfo) {
         const trackInfo = response.trackInfo;
         
